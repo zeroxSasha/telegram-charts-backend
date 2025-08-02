@@ -1,2 +1,1 @@
 # telegram charts
-# telegram-charts

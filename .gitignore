@@ -1,0 +1,9 @@
+.env
+__pycache__/
+venv/
+*.session
+*.session-shm
+*.session-wal
+.pytest_cache
+.coverage
+htmlcov/
