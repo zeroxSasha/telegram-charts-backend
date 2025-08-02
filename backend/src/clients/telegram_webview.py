@@ -4,8 +4,6 @@ from pyrogram.raw.functions.messages import RequestMainWebView
 from pyrogram.raw.types.input_peer_empty import InputPeerEmpty
 
 async def request_webview_url(name_tg_session, api_id, api_hash, tg_bot):
-    import time
-    time.sleep(10)
     async with Client(
         name=name_tg_session,
         api_id=api_id,
