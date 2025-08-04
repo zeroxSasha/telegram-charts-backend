@@ -1,13 +1,13 @@
 import datetime
-from fastapi import APIRouter
 from api import updater
+from fastapi import APIRouter
 
 router = APIRouter()
 
 @router.get("/collections")
-async def hello():
+async def collections():
     if updater.collections is None:
-        return {"status": "updating please wait"}
+        return { "status": "updating" }
     else:
         value = datetime.datetime.fromtimestamp(updater.last_updated)
         

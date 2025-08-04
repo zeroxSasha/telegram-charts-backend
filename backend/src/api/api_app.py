@@ -4,12 +4,19 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from api.updater import updater
-from api.routes.collections import router
+from api.routes.app_router import router
+from services import init_models
+from core import DatabaseError
 
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app):
+    try:
+        await init_models()
+    except DatabaseError as e:
+        logger.critical("Database error: %s", e)
+
     task = asyncio.create_task(updater())
     try:
         yield
