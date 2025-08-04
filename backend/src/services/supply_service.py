@@ -5,7 +5,7 @@ from core import DatabaseError, TIMEOUT
 async def fetch_supply():
     try:
         return await asyncio.wait_for(
-            await raw_fetch_supply(),
+            raw_fetch_supply(),
             timeout=TIMEOUT
         )
     except asyncio.TimeoutError:

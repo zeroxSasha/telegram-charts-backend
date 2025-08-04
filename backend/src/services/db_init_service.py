@@ -5,7 +5,7 @@ from core import DatabaseError, TIMEOUT
 async def init_models():
     try:
         return await asyncio.wait_for(
-            await raw_init_models(),
+            raw_init_models(),
             timeout=TIMEOUT
         )
     except asyncio.TimeoutError:
