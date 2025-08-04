@@ -6,3 +6,6 @@ class PalaceAuthError(Exception):
 
 class PalaceClientError(Exception):
     """Raised when PalaceNFTClient fails to fetch collections or offers."""
+
+class DatabaseError(Exception):
+    """Raised when client fails to connect to database or cannot fetch data"""
