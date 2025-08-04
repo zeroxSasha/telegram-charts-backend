@@ -1,7 +1,7 @@
 import asyncio
-from clients.palace import PalaceNFTClient
-from clients.telegram_webview import request_webview_url
-from core import PALACENFT_BASE_URL, X_USER_DATA, TELEGRAM_SESSION, API_ID, API_HASH, TELEGRAM_BOT, TIMEOUT, SLEEP_BETWEEN_REQUESTS
+from clients import PalaceNFTClient
+from clients import request_webview_url
+from core import PALACENFT_BASE_URL, X_USER_DATA, TELEGRAM_SESSION, API_ID, API_HASH, TELEGRAM_BOT, TIMEOUT, TELEGRAM_SESSION_LOGIN_TIMEOUT, SLEEP_BETWEEN_REQUESTS
 from utils import extract_auth_params, generate_x_user_data
 from core import TelegramWebViewError, PalaceAuthError, PalaceClientError
 
@@ -19,13 +19,13 @@ async def get_palace_url(telegram_session, api_id, api_hash, telegram_bot):
     try:
         return await asyncio.wait_for(
             request_webview_url(telegram_session, api_id, api_hash, telegram_bot),
-            timeout=TIMEOUT
+            timeout=TELEGRAM_SESSION_LOGIN_TIMEOUT
         )
     except asyncio.TimeoutError:
         raise TelegramWebViewError("Timeout while requesting WebView URL")
     except Exception as e:
         raise TelegramWebViewError(f"Unexpected error while requesting WebView: {e}")
-    
+
 def get_x_user_data_from_url(url):
     try:
         auth_date, signature, hash_value = extract_auth_params(url)
