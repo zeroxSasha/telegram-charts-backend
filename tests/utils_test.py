@@ -1,6 +1,6 @@
 import pytest
 
-from utils import generate_x_user_data, extract_auth_params
+from src.utils import generate_x_user_data, extract_auth_params
 
 def test_generate_x_user_data():
     result = generate_x_user_data("x_user_data123", "123", "sig", "hash123")
