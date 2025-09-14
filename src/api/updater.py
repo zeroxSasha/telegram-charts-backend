@@ -3,7 +3,7 @@ import asyncio
 import logging
 
 from services import fetch_floor_prices, fetch_supply
-from core import UPDATE_INTERVAL
+from core import COLLECTIONS_UPDATE_INTERVAL
 from core import TelegramWebViewError, PalaceAuthError, PalaceClientError, DatabaseError
 
 logger = logging.getLogger(__name__)
@@ -34,4 +34,4 @@ async def updater():
         except Exception as e:
             logger.exception("Unexpected error during updater loop")
 
-        await asyncio.sleep(UPDATE_INTERVAL)
+        await asyncio.sleep(COLLECTIONS_UPDATE_INTERVAL)

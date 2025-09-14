@@ -1,12 +1,12 @@
 import asyncio
 from clients import PalaceNFTClient
 from clients import request_webview_url
-from core import PALACENFT_BASE_URL, X_USER_DATA, TELEGRAM_SESSION, API_ID, API_HASH, TELEGRAM_BOT, TIMEOUT, TELEGRAM_SESSION_LOGIN_TIMEOUT, SLEEP_BETWEEN_REQUESTS
+from core import PALACENFT_BASE_URL, PALACENFT_X_USER_DATA, TELEGRAM_SESSION_NAME, TELEGRAM_API_ID, TELEGRAM_API_HASH, PALACENFT_BOT, TELEGRAM_SESSION_LOGIN_TIMEOUT, COLLECTION_REQUEST_DELAY, REQUEST_TIMEOUT
 from utils import extract_auth_params, generate_x_user_data
 from core import TelegramWebViewError, PalaceAuthError, PalaceClientError
 
 async def fetch_floor_prices():
-    palace_url = await get_palace_url(TELEGRAM_SESSION, API_ID, API_HASH, TELEGRAM_BOT)
+    palace_url = await get_palace_url(TELEGRAM_SESSION_NAME, TELEGRAM_API_ID, TELEGRAM_API_HASH, PALACENFT_BOT)
 
     x_user_data = get_x_user_data_from_url(palace_url)
 
@@ -29,7 +29,7 @@ async def get_palace_url(telegram_session, api_id, api_hash, telegram_bot):
 def get_x_user_data_from_url(url):
     try:
         auth_date, signature, hash_value = extract_auth_params(url)
-        return generate_x_user_data(X_USER_DATA, auth_date, signature, hash_value)
+        return generate_x_user_data(PALACENFT_X_USER_DATA, auth_date, signature, hash_value)
     except Exception as e:
         raise PalaceAuthError(f"Error while parsing palaceNFT url: {e}")
 
@@ -38,7 +38,7 @@ async def get_collections(x_user_data):
         async with PalaceNFTClient(PALACENFT_BASE_URL, x_user_data) as client:
             return await asyncio.wait_for(
                 client.collections_on_sale(),
-                timeout=TIMEOUT
+                timeout=REQUEST_TIMEOUT
             )
     except asyncio.TimeoutError:
         raise PalaceClientError("Timeout while fetching collections")
@@ -52,13 +52,13 @@ async def enrich_collections(collections, x_user_data):
             try:
                 pack = await asyncio.wait_for(
                     client.offers_by_id(col["id"]),
-                    timeout=TIMEOUT
+                    timeout=REQUEST_TIMEOUT
                 )
                 updated[col["name"]] = {
                     "floor_price": pack["offers"][0]["price"],
                     "logo": col["logo"]
                 }
-                await asyncio.sleep(SLEEP_BETWEEN_REQUESTS)
+                await asyncio.sleep(COLLECTION_REQUEST_DELAY)
             except asyncio.TimeoutError:
                 raise PalaceClientError("Timeout while fetching offers")
             except Exception as e:
