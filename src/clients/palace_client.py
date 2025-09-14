@@ -7,11 +7,23 @@ class PalaceNFTClient:
         self.__x_user_data = x_user_data
 
     async def __aenter__(self):
-        self.__session = aiohttp.ClientSession(headers={
-            "x-user-data": self.__x_user_data,
-            "Accept": "*/*",
-            "User-Agent": "Mozilla/5.0"
-        })
+        self.__session = aiohttp.ClientSession(
+            headers={
+                "x-user-data": self.__x_user_data,
+                "Accept": "*/*",
+                "User-Agent": "Mozilla/5.0"
+            }
+        )
+        async with self.__session.post(f"{self.__base_url}/users/check") as response:
+            response.raise_for_status()
+            data = await response.json()
+            token = data.get("JWT")
+            if not token:
+                raise RuntimeError("No JWT token in /users/check response")
+            
+            self.__session._default_headers.update(
+                {"Authorization": f"Bearer {token}"}
+            )
         return self
     
     async def __aexit__(self, *args):
